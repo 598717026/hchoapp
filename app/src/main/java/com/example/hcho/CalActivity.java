@@ -281,6 +281,7 @@ public class CalActivity extends Activity {
             Log.i(TAG, "handleMessage");
             TextView textView = findViewById(R.id.statusView);
 
+            Log.d(TAG, "msg.what = " + msg.what);
             switch (msg.what) {
 
                 case 1:
@@ -609,7 +610,7 @@ public class CalActivity extends Activity {
 
                             Message message = new Message();
 
-                            message.what = 0;
+                            message.what = 3;
 
                             mHandler.sendMessage(message);
                         }

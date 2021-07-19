@@ -60,6 +60,12 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void clearValues() {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(Constant.TABLE_VALUE, null, null);
+        db.close();
+    }
+
 
     int sampleToPpb(int adc)
     {
@@ -118,7 +124,7 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
             adc = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_ADC));
             ppb = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_PPB));
             //输出查询结果
-            Log.e(this.getClass().getName(),"查询到的数据是:"+adc+","+ppb);
+//            Log.e(this.getClass().getName(),"查询到的数据是:"+adc+","+ppb);
 
         }
         cursor.close();
@@ -140,7 +146,7 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
             val_max = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MAX));
             val_min = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MIN));
             //输出查询结果
-            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
+//            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
 
         }
         cursor.close();
@@ -162,7 +168,7 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
             val_max = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MAX));
             val_min = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MIN));
             //输出查询结果
-            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
+//            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
 
         }
         cursor.close();
@@ -184,7 +190,7 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
             val_max = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MAX));
             val_min = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MIN));
             //输出查询结果
-            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
+//            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
 
         }
         cursor.close();
@@ -206,7 +212,7 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
             val_max = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MAX));
             val_min = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_MIN));
             //输出查询结果
-            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
+//            Log.e(this.getClass().getName(),"查询到的数据是:"+adc_max+","+adc_min+","+val_max+","+val_min+",");
 
         }
         cursor.close();

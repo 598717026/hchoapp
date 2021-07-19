@@ -64,7 +64,7 @@ public class DataService extends Service {
 
         sqliteOpenHelper.insert(getHchoAdc());
 
-        Log.e(this.getClass().getSimpleName(), "onStartCommand");
+//        Log.e(this.getClass().getSimpleName(), "onStartCommand");
 
         return super.onStartCommand(intent, flags, startId);
     }

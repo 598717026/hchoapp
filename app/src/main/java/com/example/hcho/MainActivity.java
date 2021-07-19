@@ -3,6 +3,7 @@ package com.example.hcho;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,7 +24,7 @@ import java.util.TimerTask;
 //import org.apache.commons.math3.transform.FastFourierTransformer;
 //import org.apache.commons.math3.transform.TransformType;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
 
