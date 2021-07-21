@@ -17,6 +17,8 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
     public static final String TAG = MySqliteOpenHelper.class.getName();
     private Context context;
 
+    private static Kalman kalman = new Kalman();
+
     public MySqliteOpenHelper(Context context, String databaseName, int version) {
         super(context, databaseName, null, version);
         this.context = context;
@@ -49,6 +51,11 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
     }
 
     public void insert(int value) {
+        SensorSingleData sensorSingleData = new SensorSingleData();
+        sensorSingleData.setAccX(value);
+        Log.e(this.getClass().getName(),"插入数据:"+value);
+        value = (int) kalman.filter(sensorSingleData).getAccX();
+        Log.e(this.getClass().getName(),"插入数据kalmanfilter:"+value);
         int ppb = sampleToPpb(value);
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
@@ -102,14 +109,17 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(Constant.TABLE_VALUE, null, null, null, null,null, "CreatedTime desc", "1");
         int adc = 0;
         int ppb = 0;
-        while (cursor.moveToNext()) {
-            adc = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_ADC));
-            ppb = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_PPB));
-            //输出查询结果
-            Log.e(this.getClass().getName(),"查询到的数据是:"+adc+","+ppb);
 
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                adc = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_ADC));
+                ppb = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_PPB));
+                //输出查询结果
+//            Log.e(this.getClass().getName(),"查询到的数据是:"+adc+","+ppb);
+
+            }
+            cursor.close();
         }
-        cursor.close();
         db.close();
         return adc;
     }
@@ -120,14 +130,16 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
         Cursor cursor = db.query(Constant.TABLE_VALUE, null, null, null, null,null, "CreatedTime desc", "1");
         int adc = 0;
         int ppb = 0;
-        while (cursor.moveToNext()) {
-            adc = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_ADC));
-            ppb = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_PPB));
-            //输出查询结果
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                adc = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_ADC));
+                ppb = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_VALUE_PPB));
+                //输出查询结果
 //            Log.e(this.getClass().getName(),"查询到的数据是:"+adc+","+ppb);
 
+            }
+            cursor.close();
         }
-        cursor.close();
         db.close();
         return ppb;
     }
