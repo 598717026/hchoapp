@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothGatt;
@@ -15,14 +16,18 @@ import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
 import android.bluetooth.le.ScanSettings;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import java.lang.reflect.InvocationTargetException;
@@ -77,6 +82,300 @@ public class CalActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cal);
+
+
+        TextView tvadcmax = findViewById(R.id.adcMaxView);
+        tvadcmax.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(CalActivity.this);
+                View promptsView = li.inflate(R.layout.prompts, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        CalActivity.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView
+                        .findViewById(R.id.editTextDialogUserInput);
+                userInput.setText("" + m_AdcMax);
+                userInput.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+
+                final TextView messageTextView = (TextView) promptsView
+                        .findViewById(R.id.textViewpro);
+                messageTextView.setText("输入ADCMAX值");
+
+                // set dialog message
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // get user input and set it to result
+                                // edit text
+//                                        result.setText(userInput.getText());
+                                Log.d(getClass().getName(), "userInput：" + userInput.getText());
+                                try {
+
+                                    m_AdcMax = Integer.parseInt(userInput.getText().toString());
+
+                                    sqliteOpenHelper.updateSetting(m_AdcMax, m_AdcMin, m_ValMax, m_ValMin);
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            Message message = new Message();
+
+                                            message.what = 3;
+
+                                            mHandler.sendMessage(message);
+                                        }
+                                    }).start();
+
+                                } catch (NumberFormatException e) {
+
+                                    e.printStackTrace();
+
+                                }
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+                return true;
+            }
+        });
+        TextView tvadcmin = findViewById(R.id.adcMinView);
+        tvadcmin.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(CalActivity.this);
+                View promptsView = li.inflate(R.layout.prompts, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        CalActivity.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView
+                        .findViewById(R.id.editTextDialogUserInput);
+                userInput.setText("" + m_AdcMin);
+                userInput.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+
+                final TextView messageTextView = (TextView) promptsView
+                        .findViewById(R.id.textViewpro);
+                messageTextView.setText("输入ADCMIN值");
+
+                // set dialog message
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // get user input and set it to result
+                                // edit text
+//                                        result.setText(userInput.getText());
+                                Log.d(getClass().getName(), "userInput：" + userInput.getText());
+                                try {
+
+                                    m_AdcMin = Integer.parseInt(userInput.getText().toString());
+
+                                    sqliteOpenHelper.updateSetting(m_AdcMax, m_AdcMin, m_ValMax, m_ValMin);
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            Message message = new Message();
+
+                                            message.what = 3;
+
+                                            mHandler.sendMessage(message);
+                                        }
+                                    }).start();
+
+                                } catch (NumberFormatException e) {
+
+                                    e.printStackTrace();
+
+                                }
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+                return true;
+            }
+        });
+        TextView tvvalmax = findViewById(R.id.valMaxView);
+        tvvalmax.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(CalActivity.this);
+                View promptsView = li.inflate(R.layout.prompts, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        CalActivity.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView
+                        .findViewById(R.id.editTextDialogUserInput);
+                userInput.setText("" + m_ValMax);
+                userInput.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+
+                final TextView messageTextView = (TextView) promptsView
+                        .findViewById(R.id.textViewpro);
+                messageTextView.setText("输入VALMAX值");
+
+                // set dialog message
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // get user input and set it to result
+                                // edit text
+//                                        result.setText(userInput.getText());
+                                Log.d(getClass().getName(), "userInput：" + userInput.getText());
+                                try {
+
+                                    m_ValMax = Integer.parseInt(userInput.getText().toString());
+
+                                    sqliteOpenHelper.updateSetting(m_AdcMax, m_AdcMin, m_ValMax, m_ValMin);
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            Message message = new Message();
+
+                                            message.what = 3;
+
+                                            mHandler.sendMessage(message);
+                                        }
+                                    }).start();
+
+                                } catch (NumberFormatException e) {
+
+                                    e.printStackTrace();
+
+                                }
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+                return true;
+            }
+        });
+        TextView tvvalmin = findViewById(R.id.valMinView);
+        tvvalmin.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                // get prompts.xml view
+                LayoutInflater li = LayoutInflater.from(CalActivity.this);
+                View promptsView = li.inflate(R.layout.prompts, null);
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        CalActivity.this);
+
+                // set prompts.xml to alertdialog builder
+                alertDialogBuilder.setView(promptsView);
+
+                final EditText userInput = (EditText) promptsView
+                        .findViewById(R.id.editTextDialogUserInput);
+                userInput.setText("" + m_ValMin);
+                userInput.setInputType(EditorInfo.TYPE_CLASS_NUMBER);
+
+                final TextView messageTextView = (TextView) promptsView
+                        .findViewById(R.id.textViewpro);
+                messageTextView.setText("输入VALMIN值");
+
+                // set dialog message
+                alertDialogBuilder.setCancelable(false);
+                alertDialogBuilder.setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // get user input and set it to result
+                                // edit text
+//                                        result.setText(userInput.getText());
+                                Log.d(getClass().getName(), "userInput：" + userInput.getText());
+                                try {
+
+                                    m_ValMin = Integer.parseInt(userInput.getText().toString());
+
+                                    sqliteOpenHelper.updateSetting(m_AdcMax, m_AdcMin, m_ValMax, m_ValMin);
+
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+
+                                            Message message = new Message();
+
+                                            message.what = 3;
+
+                                            mHandler.sendMessage(message);
+                                        }
+                                    }).start();
+
+                                } catch (NumberFormatException e) {
+
+                                    e.printStackTrace();
+
+                                }
+                            }
+                        });
+                alertDialogBuilder.setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+                return true;
+            }
+        });
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             // Android M Permission check

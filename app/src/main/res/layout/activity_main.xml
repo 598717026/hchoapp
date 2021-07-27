@@ -29,22 +29,29 @@
             android:layout_height="wrap_content"
             android:text="正常" />
 
-        <Button
-            android:id="@+id/buttonUpload"
+        <lecho.lib.hellocharts.view.LineChartView
+            android:id="@+id/line_chart"
+            android:padding="25dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="上传数据" />
+            android:background="#ffffff"/>
 
-        <Button
-            android:id="@+id/buttonClear"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="清除数据" />
+<!--        <Button-->
+<!--            android:id="@+id/buttonUpload"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="上传数据" />-->
 
-        <Button
-            android:id="@+id/buttonCal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="校准" />
+<!--        <Button-->
+<!--            android:id="@+id/buttonClear"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="清除数据" />-->
+
+<!--        <Button-->
+<!--            android:id="@+id/buttonCal"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="校准" />-->
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

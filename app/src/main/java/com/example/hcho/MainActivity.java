@@ -18,8 +18,20 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import lecho.lib.hellocharts.gesture.ZoomType;
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.AxisValue;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.model.ValueShape;
+import lecho.lib.hellocharts.model.Viewport;
+import lecho.lib.hellocharts.view.LineChartView;
 
 //import org.apache.commons.math3.complex.Complex;
 //import org.apache.commons.math3.transform.DftNormalization;
@@ -47,6 +59,16 @@ public class MainActivity extends Activity {
     private MySqliteOpenHelper sqliteOpenHelper;
 
     private ContentResolver mContentResolver = null;
+    private LineChartView lineChart;
+
+    private List<PointValue> mPointValues = new ArrayList<PointValue>();
+    private List<AxisValue> mAxisXValues = new ArrayList<AxisValue>();
+
+
+    final int POINT_NUM = 30;
+
+    final int CLICK_MAX = 10;
+    private int mClickNum = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,42 +80,71 @@ public class MainActivity extends Activity {
         Intent intentOne = new Intent(this, DataService.class);
         startService(intentOne);
 
+        lineChart = (LineChartView)findViewById(R.id.line_chart);
+        initLineChart();
 
-        Button mButton = findViewById(R.id.buttonCal);
-        mButton.setOnClickListener(new View.OnClickListener() {
+        lineChart.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent = intent.setClass(MainActivity.this, CalActivity.class);
-                startActivity(intent);
+            public void onClick(View v) {
+                if (mClickNum == 0)
+                {
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            /**
+                             *要执行的操作
+                             */
+                            mClickNum = 0;
+                        }
+                    }, 5000);
+                }
+                mClickNum += 1;
+                if (mClickNum >= CLICK_MAX)
+                {
+                    mClickNum = 0;
+                    Intent intent = new Intent();
+                    intent = intent.setClass(MainActivity.this, FunInterfaceActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
-        Button mButtonClear = findViewById(R.id.buttonClear);
-        mButtonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // 清除数据
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle("是否真的清除数据？")
-                        .setIcon(android.R.drawable.ic_dialog_info)
-                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                sqliteOpenHelper.clearValues();
-                            }
-                        })
-                        .setNegativeButton("取消", null)
-                        .show();
-            }
-        });
-
-        Button mButtonUpload = findViewById(R.id.buttonUpload);
-        mButtonUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                // 上传数据
-            }
-        });
+//        Button mButton = findViewById(R.id.buttonCal);
+//        mButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent();
+//                intent = intent.setClass(MainActivity.this, CalActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+//
+//        Button mButtonClear = findViewById(R.id.buttonClear);
+//        mButtonClear.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // 清除数据
+//                new AlertDialog.Builder(MainActivity.this)
+//                        .setTitle("是否真的清除数据？")
+//                        .setIcon(android.R.drawable.ic_dialog_info)
+//                        .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+//                            public void onClick(DialogInterface arg0, int arg1) {
+//                                sqliteOpenHelper.clearValues();
+//                            }
+//                        })
+//                        .setNegativeButton("取消", null)
+//                        .show();
+//            }
+//        });
+//
+//        Button mButtonUpload = findViewById(R.id.buttonUpload);
+//        mButtonUpload.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                // 上传数据
+//            }
+//        });
 
         mContentResolver = getContentResolver();
 
@@ -187,6 +238,9 @@ public class MainActivity extends Activity {
                             hchoTextView.setBackgroundColor(Color.RED);
                         }
                     }
+
+                    addLineChartData(ppb);
+                    setLineChartData();
                     break;
 
                 default:
@@ -199,6 +253,121 @@ public class MainActivity extends Activity {
 
     };
 
+    public void addLineChartData(float v)
+    {
+        if (mPointValues.size() == 0)
+        {
+            if (v > 1) {
+                mPointValues.add(new PointValue(0, v - 1));
+            }
+            else
+            {
+                mPointValues.add(new PointValue(0, 0));
+            }
+        }
+        Log.d(getClass().getName(), "addLineChartData1：" + mPointValues.size());
+        mPointValues.add(new PointValue(mPointValues.size(), v));
+        Log.d(getClass().getName(), "addLineChartData2：" + mPointValues.size());
+        if (mPointValues.size() > POINT_NUM)
+        {
+            mPointValues.remove(0);
+            for (int i = 0; i < mPointValues.size(); i++)
+            {
+                PointValue iv = mPointValues.get(i);
+                iv.set(i, iv.getY());
+            }
+            // 解决所有值一样显示不了问题，隐藏第一个默认值
+            PointValue iv = mPointValues.get(0);
+            PointValue iv1 = mPointValues.get(1);
+            iv.set(0, iv1.getY() - 1);
+        }
+        Log.d(getClass().getName(), "addLineChartData3：" + mPointValues.size());
+    }
+
+    public void setLineChartData() {
+        Line line = new Line(mPointValues).setColor(Color.parseColor("#FFCD41"));
+        List<Line> lines = new ArrayList<Line>();
+        line.setShape(ValueShape.CIRCLE);    //折线图上每个数据点的形状，这里是圆形
+        line.setCubic(false);
+        line.setFilled(false);
+        line.setHasLabels(false);
+        line.setHasLines(true);
+        line.setHasPoints(false);
+        lines.add(line);
+        LineChartData data = new LineChartData();
+        data.setLines(lines);
+
+        //坐标轴
+        Axis axisX = new Axis();
+        axisX.setHasTiltedLabels(true);
+        axisX.setTextColor(Color.parseColor("#D6D6D9"));//设置字体颜色
+
+        axisX.setTextSize(8);//设置字体大小
+        axisX.setMaxLabelChars(8);//最多几个X轴坐标
+        axisX.setValues(mAxisXValues);
+        data.setAxisXBottom(axisX);
+        axisX.setHasLines(true);
+
+
+        Axis axisY = new Axis();
+        axisY.setName("");
+        axisY.setTextSize(8);
+        data.setAxisYLeft(axisY);
+        //设置行为属性，缩放、滑动、平移
+        lineChart.setInteractive(true);
+        lineChart.setZoomType(ZoomType.HORIZONTAL);
+        lineChart.setMaxZoom((float) 3);
+        lineChart.setLineChartData(data);
+        lineChart.setVisibility(View.VISIBLE);
+        //设置X轴数据的显示个数（x轴0-7个数据）
+        Viewport v = new Viewport(lineChart.getMaximumViewport());
+        // 解决所有值一样显示不了问题，隐藏第一个默认值
+        v.left = 2;
+        v.right= POINT_NUM;
+        lineChart.setCurrentViewport(v);
+    }
+
+    private void initLineChart(){
+        Line line = new Line(mPointValues).setColor(Color.parseColor("#FFCD41"));
+        List<Line> lines = new ArrayList<Line>();
+        line.setShape(ValueShape.CIRCLE);    //折线图上每个数据点的形状，这里是圆形
+        line.setCubic(false);
+        line.setFilled(false);
+        line.setHasLabels(true);
+        line.setHasLines(true);
+        line.setHasPoints(true);
+        lines.add(line);
+        LineChartData data = new LineChartData();
+        data.setLines(lines);
+
+        //坐标轴
+        Axis axisX = new Axis();
+        axisX.setHasTiltedLabels(true);
+        axisX.setTextColor(Color.parseColor("#D6D6D9"));//设置字体颜色
+
+        axisX.setTextSize(8);//设置字体大小
+        axisX.setMaxLabelChars(8);//最多几个X轴坐标
+        axisX.setValues(mAxisXValues);
+        data.setAxisXBottom(axisX);
+        axisX.setHasLines(true);
+
+
+        Axis axisY = new Axis();
+        axisY.setName("");
+        axisY.setTextSize(8);
+        data.setAxisYLeft(axisY);
+        //设置行为属性，缩放、滑动、平移
+        lineChart.setInteractive(true);
+        lineChart.setZoomType(ZoomType.HORIZONTAL);
+        lineChart.setMaxZoom((float) 3);
+        lineChart.setLineChartData(data);
+        lineChart.setVisibility(View.VISIBLE);
+        //设置X轴数据的显示个数（x轴0-7个数据）
+        Viewport v = new Viewport(lineChart.getMaximumViewport());
+        v.left = 0;
+        v.right= 7;
+        lineChart.setCurrentViewport(v);
+    }
 
 //    final int DO_LENGHT = 120;
 //    final int FFT_LENGHT = 512;

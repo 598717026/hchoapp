@@ -57,6 +57,10 @@ public class MySqliteOpenHelper extends SQLiteOpenHelper {
         value = (int) kalman.filter(sensorSingleData).getAccX();
         Log.e(this.getClass().getName(),"插入数据kalmanfilter:"+value);
         int ppb = sampleToPpb(value);
+        if (ppb < 0)
+        {
+            ppb = 0;
+        }
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(Constant.COLUMN_VALUE_ADC, value);
