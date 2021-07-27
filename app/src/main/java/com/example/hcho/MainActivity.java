@@ -300,7 +300,7 @@ public class MainActivity extends Activity {
         //坐标轴
         Axis axisX = new Axis();
         axisX.setHasTiltedLabels(true);
-        axisX.setTextColor(Color.parseColor("#D6D6D9"));//设置字体颜色
+        axisX.setTextColor(Color.parseColor("#565659"));//设置字体颜色
 
         axisX.setTextSize(8);//设置字体大小
         axisX.setMaxLabelChars(8);//最多几个X轴坐标
@@ -312,6 +312,7 @@ public class MainActivity extends Activity {
         Axis axisY = new Axis();
         axisY.setName("");
         axisY.setTextSize(8);
+        axisY.setTextColor(Color.parseColor("#565659"));//设置字体颜色
         data.setAxisYLeft(axisY);
         //设置行为属性，缩放、滑动、平移
         lineChart.setInteractive(true);
