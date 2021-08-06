@@ -196,7 +196,7 @@ public class MainActivity extends Activity {
                 }).start();
             }
         };
-        timer.schedule(task,5000,1000);
+        timer.schedule(task,1000,1000);
 
     }
 
